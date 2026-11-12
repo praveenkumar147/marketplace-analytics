@@ -2,10 +2,11 @@ table _Measure
 	lineageTag: 29633751-5a5c-4aff-9003-bd00bb534444
 
 	measure 'Product Revenue' = SUM ( fact_sales[price] )
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 10bc8995-5e85-4289-9f67-ff172d0a9fd8
 
 	measure 'Freight Revenue' = SUM ( fact_sales[freight_value] )
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 185ab443-b66a-4ac9-9f00-aedd6aaa1f1d
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -23,7 +24,7 @@ table _Measure
 		lineageTag: 46d28d83-1265-4301-8184-6e53f9bcd5d8
 
 	measure 'Average Order Value' = DIVIDE ( [Total Revenue], DISTINCTCOUNT ( fact_sales[order_id] ) )
-		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		formatString: \R\$ #,0.00;-\R\$ #,0.00;\R\$ #,0.00
 		lineageTag: 0508a49b-172a-4179-86d4-b47a750d3304
 
 	measure 'Units Sold' = COUNTROWS ( fact_sales )
@@ -36,7 +37,7 @@ table _Measure
 			    [Total Revenue],
 			    DATEADD ( dim_date[Date], -1, MONTH )
 			)
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 6ec59e11-1631-43b4-a847-28a55a9ebc31
 
 	measure 'Revenue MoM %' =
@@ -56,7 +57,7 @@ table _Measure
 			    [Total Revenue],
 			    SAMEPERIODLASTYEAR ( dim_date[Date] )
 			)
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 70e48a34-3416-4636-9b96-db9619eadc9e
 
 	measure 'Revenue YoY %' =
@@ -79,7 +80,7 @@ table _Measure
 			        dim_date[Date] <= MAX ( dim_date[Date] )
 			    )
 			)
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 16d98818-d0bf-4670-9165-673bf042cc42
 
 	measure 'Total Customers' =
@@ -176,7 +177,7 @@ table _Measure
 	measure 'Avg Item Price' =
 			
 			DIVIDE ( [Product Revenue], [Units Sold] )
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0.00;-\R\$ #,0.00;\R\$ #,0.00
 		lineageTag: 2577104d-d14b-4139-97cd-0e07b087a92d
 
 	measure 'State Revenue Share %' =
@@ -258,7 +259,7 @@ table _Measure
 		lineageTag: 7ad2cbbc-31eb-4d12-ae31-791af5ade610
 
 	measure 'Payment Value' = SUM ( fact_payments[payment_value] )
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: 0c00d4ed-e69a-42c5-883d-933ddecc3b12
 
 	measure 'Orders Using Method' =
@@ -313,8 +314,8 @@ table _Measure
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 6aa231ec-20ca-41e3-a54f-8cc805946a8c
 
-	measure 'Total Reveue' = SUM ( fact_sales[line_total] )
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+	measure 'Total Revenue' = SUM ( fact_sales[line_total] )
+		formatString: \R\$ #,0;-\R\$ #,0;\R\$ #,0
 		lineageTag: e600500b-3382-4c97-91a4-6f154b73d102
 
 	column Column

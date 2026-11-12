@@ -1,11 +1,6 @@
 table dim_customer
 	lineageTag: e18bf0e2-a331-46d6-a304-a2eb80459a43
 
-	measure 'Total Revenue' = SUM ( fact_sales[line_total] )
-		lineageTag: 25e4966e-bf96-4d45-8982-55454759cebe
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column customer_unique_id
 		dataType: string
 		lineageTag: 4514b767-5240-4ace-a17c-9438f62d2aee
@@ -103,6 +98,7 @@ table dim_customer
 
 	column rfm_segment
 		dataType: string
+		sortByColumn: rfm_segment_order
 		lineageTag: 3e311e6b-14c5-4beb-87d9-a6f8f9b0fdcc
 		summarizeBy: none
 		sourceColumn: rfm_segment

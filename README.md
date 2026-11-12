@@ -7,7 +7,7 @@ from the Brazilian marketplace Olist, using Python, MySQL and Power BI.
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-Desktop-F2C811?logo=powerbi&logoColor=black)
 ![pandas](https://img.shields.io/badge/pandas-2.3-150458?logo=pandas&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-105%20passing-1BAF7A)
+![Tests](https://img.shields.io/badge/tests-115%20passing-1BAF7A)
 
 > Raw CSVs → profiled → cleaned and validated in Python → loaded into a constrained MySQL schema →
 > 25 business SQL queries → EDA notebook → RFM segmentation → Power BI star-schema model → business recommendations.
@@ -93,7 +93,7 @@ Design principles:
 | Analysis | pandas, NumPy, Matplotlib, Seaborn, Jupyter |
 | Database | MySQL 8.0, SQLAlchemy 2, PyMySQL |
 | BI | Power BI Desktop (DAX, star schema) |
-| Quality | pytest (105 tests), automated data-quality and validation reports |
+| Quality | pytest (115 tests), automated data-quality and validation reports |
 | Tooling | VS Code, Git, GitHub, python-dotenv |
 
 ## Dataset
@@ -244,9 +244,14 @@ The Python and SQL (`NTILE`) implementations produce **identical** segments.
 
 ## Power BI dashboard
 
-**Status: the data model, views, measures and theme are complete and verified. The `.pbix` is being built
-in Power BI Desktop from [`powerbi/dashboard_guide.md`](powerbi/dashboard_guide.md).**
-Screenshots will be added here once the dashboard is finished.
+**Open [`powerbi/marketplace_analytics.pbip`](powerbi/marketplace_analytics.pbip) in Power BI Desktop and
+click Refresh.** The report is saved as a Power BI Project (PBIP): the model is TMDL and the report is PBIR,
+both plain text, so the whole dashboard is version-controlled without any data.
+
+The five pages are **generated as code** by [`src/reporting/build_dashboard.py`](src/reporting/build_dashboard.py).
+That script keeps the hand-built visuals, writes the rest, and is safe to re-run. Every report file is checked
+against Microsoft's published PBIR schemas ([`validate_report.py`](src/reporting/validate_report.py)), and
+[`tests/test_dashboard.py`](tests/test_dashboard.py) confirms that every field a visual uses exists in the model.
 
 | Page | Contents |
 |---|---|
@@ -262,13 +267,20 @@ Model: two fact tables at different grains (`fact_orders`, `fact_sales`) plus `f
 product, seller, state and date dimensions. All business logic sits upstream in SQL views, so DAX stays simple.
 [`reports/powerbi_expected_values.md`](reports/powerbi_expected_values.md) lists the values each visual must show.
 
-<!-- Screenshots (add after building the dashboard):
+**Executive Overview**
 ![Executive Overview](reports/dashboard/page1_executive.png)
+
+**Product and Category Analysis**
 ![Product and Category](reports/dashboard/page2_products.png)
+
+**Customer Analytics**
 ![Customer Analytics](reports/dashboard/page3_customers.png)
+
+**Regional and Delivery Analytics**
 ![Regional and Delivery](reports/dashboard/page4_regional_delivery.png)
+
+**Payment and Review Analysis**
 ![Payment and Review](reports/dashboard/page5_payments_reviews.png)
--->
 
 ## Business recommendations
 
@@ -312,7 +324,9 @@ jupyter nbconvert --to notebook --execute --inplace notebooks/01_exploratory_dat
 pytest -q
 ```
 
-6. **Power BI:** follow [`powerbi/dashboard_guide.md`](powerbi/dashboard_guide.md).
+6. **Power BI:** open `powerbi/marketplace_analytics.pbip`, enter your MySQL credentials when asked, and click
+   **Refresh**. To regenerate the report pages: `python -m src.reporting.build_dashboard` (with Power BI closed).
+   Model details: [`powerbi/dashboard_guide.md`](powerbi/dashboard_guide.md).
 
 ## Project structure
 
@@ -343,7 +357,7 @@ marketplace-analytics/
 │   ├── cleaning/             # Module B: cleaners, validation, pipeline
 │   ├── database/             # Module C/F: connection, schema, loader, Power BI views
 │   └── analysis/             # Module D/E + RFM: SQL runner, EDA helpers, RFM
-├── tests/                    # 105 pytest tests
+├── tests/                    # 115 pytest tests
 ├── .env.example              # template for MySQL credentials
 ├── requirements.txt
 └── README.md
@@ -351,7 +365,7 @@ marketplace-analytics/
 
 ## Testing and data quality
 
-- **105 automated tests** (`pytest -q`): unit tests on small hand-made DataFrames for every cleaning rule and
+- **115 automated tests** (`pytest -q`): unit tests on small hand-made DataFrames for every cleaning rule and
   metric, plus integration tests on the real data and the live database.
 - **Cross-tool verification:**
   - pandas = SQL for revenue, AOV, repeat rate and late %

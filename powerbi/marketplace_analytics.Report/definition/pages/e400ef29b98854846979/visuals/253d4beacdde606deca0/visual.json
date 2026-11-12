@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "253d4beacdde606deca0",
   "position": {
-    "x": 10,
-    "y": 122.5,
-    "z": 11,
-    "height": 95.833333333333343,
-    "width": 159.16666666666669,
-    "tabOrder": 11
+    "x": 40.0,
+    "y": 184,
+    "z": 101,
+    "height": 112,
+    "width": 355.2,
+    "tabOrder": 101
   },
   "visual": {
-    "visualType": "tableEx",
+    "visualType": "card",
     "query": {
       "queryState": {
         "Values": {
@@ -23,35 +23,72 @@
                       "Entity": "_Measure"
                     }
                   },
-                  "Property": "Total Reveue"
+                  "Property": "Total Revenue"
                 }
               },
-              "queryRef": "_Measure.Total Reveue",
-              "nativeQueryRef": "Total Reveue"
+              "queryRef": "_Measure.Total Revenue",
+              "nativeQueryRef": "Total Revenue"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "_Measure"
-                  }
-                },
-                "Property": "Total Reveue"
-              }
-            },
-            "direction": "Descending"
-          }
-        ]
       }
     },
     "visualContainerObjects": {
-      "border": [
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Total Revenue'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "26D"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0B0B0B'"
+                    }
+                  }
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
         {
           "properties": {
             "show": {
@@ -64,7 +101,6 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   }
 }

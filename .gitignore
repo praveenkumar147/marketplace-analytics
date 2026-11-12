@@ -31,3 +31,4 @@ powerbi/backups/
 Thumbs.db
 .vscode/
 .idea/
+powerbi/.schema_cache/

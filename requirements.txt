@@ -17,3 +17,7 @@ nbconvert>=7.16
 
 # Testing
 pytest>=8.0
+
+# Power BI report validation (src/reporting/validate_report.py)
+jsonschema>=4.21
+referencing>=0.35

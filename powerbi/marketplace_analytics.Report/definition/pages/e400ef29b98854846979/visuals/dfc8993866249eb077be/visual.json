@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "dfc8993866249eb077be",
   "position": {
-    "x": 18.888888888888889,
-    "y": 401.11111111111109,
-    "z": 16,
-    "height": 432.22222222222223,
-    "width": 650,
-    "tabOrder": 16
+    "x": 40,
+    "y": 312,
+    "z": 106,
+    "height": 360,
+    "width": 1112,
+    "tabOrder": 106
   },
   "visual": {
     "visualType": "lineChart",
@@ -42,11 +42,11 @@
                       "Entity": "_Measure"
                     }
                   },
-                  "Property": "Total Reveue"
+                  "Property": "Total Revenue"
                 }
               },
-              "queryRef": "_Measure.Total Reveue",
-              "nativeQueryRef": "Total Reveue"
+              "queryRef": "_Measure.Total Revenue",
+              "nativeQueryRef": "Total Revenue"
             }
           ]
         }
@@ -70,7 +70,49 @@
         "isDefaultSort": true
       }
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'How has revenue developed?'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Monthly total revenue (complete months 2017-01 to 2018-08)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   },
   "filterConfig": {
     "filters": [
@@ -97,7 +139,7 @@
                 "Entity": "_Measure"
               }
             },
-            "Property": "Total Reveue"
+            "Property": "Total Revenue"
           }
         },
         "type": "Advanced"

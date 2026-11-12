@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "41de5aed47e8cd88a206",
   "position": {
-    "x": 19,
-    "y": 80,
-    "z": 8,
-    "height": 20.833333333333336,
-    "width": 371.66666666666669,
-    "tabOrder": 8
+    "x": 40,
+    "y": 58,
+    "z": 102,
+    "height": 30,
+    "width": 700,
+    "tabOrder": 102
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "Executive Overview | E-commerce Performance Dashboard"
+                    "value": "Executive Overview | E-commerce Performance Dashboard",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#52514E"
+                    }
                   }
                 ]
               }

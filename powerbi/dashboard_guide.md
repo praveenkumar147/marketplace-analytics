@@ -1,13 +1,25 @@
 # Power BI Dashboard - Build Guide
 
+> **The dashboard is already built:** open `powerbi/marketplace_analytics.pbip`
+> in Power BI Desktop and click **Refresh**. It is saved in Power BI Project
+> format (PBIP: TMDL model + PBIR report), which is plain text, so it is
+> versioned in Git without any data.
+>
+> The model was built in Power BI Desktop following the steps below. The five
+> report pages were then generated as code:
+>
+> ```bash
+> python -m src.reporting.build_dashboard     # (re)write the report pages (Power BI closed)
+> python -m src.reporting.validate_report     # check every file against Microsoft's PBIR schemas
+> pytest tests/test_dashboard.py              # fields exist in the model, slicers synced, TMDL structure
+> ```
+>
+> The script keeps hand-made visuals and is safe to re-run (a second run changes
+> nothing). The manual steps below document the model and serve as a fallback.
+
 This guide builds the 5-page **Marketplace Analytics** dashboard in Power BI
 Desktop. The data model, SQL views, DAX measures and theme are already prepared
-and verified. This file walks you through assembling them. Budget about 2-3
-hours the first time.
-
-> **Why there's no .pbix in the repo yet:** a `.pbix` can't be generated reliably
-> outside Power BI Desktop. Everything it needs is scripted and tested here, so
-> you build the visuals once and save the file as `powerbi/marketplace_analytics.pbix`.
+and verified.
 
 | File | Purpose |
 |---|---|
