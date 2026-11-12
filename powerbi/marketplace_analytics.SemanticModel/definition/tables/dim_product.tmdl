@@ -1,0 +1,58 @@
+table dim_product
+	lineageTag: d27be4e9-1927-4a52-97b5-57b39d59055b
+
+	column product_id
+		dataType: string
+		lineageTag: dd50fbf2-4c13-4a2a-98d3-32018907afec
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column category
+		dataType: string
+		lineageTag: 980a61d9-d1bc-4edf-b55c-e503cf57e180
+		summarizeBy: none
+		sourceColumn: category
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_pt
+		dataType: string
+		lineageTag: eb2159f2-78b8-45a0-8192-5e4773ca9eda
+		summarizeBy: none
+		sourceColumn: category_pt
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_weight_g
+		dataType: int64
+		formatString: 0
+		lineageTag: dd993af4-ec2c-4352-ac0f-bab063920ea1
+		summarizeBy: none
+		sourceColumn: product_weight_g
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_photos_qty
+		dataType: int64
+		formatString: 0
+		lineageTag: d60d7fb2-38ca-4ccc-8e9f-c2d8708e1e59
+		summarizeBy: none
+		sourceColumn: product_photos_qty
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_dim_product = Source{[Schema="marketplace_analytics",Item="vw_dim_product"]}[Data]
+				in
+				    marketplace_analytics_vw_dim_product
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

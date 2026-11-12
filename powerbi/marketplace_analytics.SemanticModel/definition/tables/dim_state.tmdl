@@ -1,0 +1,48 @@
+table dim_state
+	lineageTag: cc6597a8-f7ee-4c05-86d6-e86889a1661f
+
+	column state
+		dataType: string
+		lineageTag: 5f22b834-453f-4c19-b7dc-14a9dc74fbcf
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column state_name
+		dataType: string
+		lineageTag: 371d72b4-246f-4893-86a2-7d69bd99566d
+		summarizeBy: none
+		sourceColumn: state_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: e2372280-5a91-4738-810d-9e27280a904c
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column map_location
+		dataType: string
+		lineageTag: fe316e1f-19fe-4cbc-90b4-67f957265fef
+		summarizeBy: none
+		sourceColumn: map_location
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_state = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_dim_state = Source{[Schema="marketplace_analytics",Item="vw_dim_state"]}[Data]
+				in
+				    marketplace_analytics_vw_dim_state
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

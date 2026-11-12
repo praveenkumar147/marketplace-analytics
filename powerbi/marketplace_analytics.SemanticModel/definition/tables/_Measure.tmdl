@@ -1,0 +1,335 @@
+table _Measure
+	lineageTag: 29633751-5a5c-4aff-9003-bd00bb534444
+
+	measure 'Product Revenue' = SUM ( fact_sales[price] )
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 10bc8995-5e85-4289-9f67-ff172d0a9fd8
+
+	measure 'Freight Revenue' = SUM ( fact_sales[freight_value] )
+		lineageTag: 185ab443-b66a-4ac9-9f00-aedd6aaa1f1d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Freight Share %' = DIVIDE ( [Freight Revenue], [Total Revenue] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2af60380-f18e-4278-a6af-17ff3ca4ad8d
+
+	measure 'Total Orders' = COUNTROWS ( fact_orders )
+		formatString: 0
+		lineageTag: cfab28ab-e15a-4e03-84b5-b80c3244c8a4
+
+	measure 'Sales Orders' = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[is_sale] = 1 )
+		formatString: 0
+		lineageTag: 46d28d83-1265-4301-8184-6e53f9bcd5d8
+
+	measure 'Average Order Value' = DIVIDE ( [Total Revenue], DISTINCTCOUNT ( fact_sales[order_id] ) )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 0508a49b-172a-4179-86d4-b47a750d3304
+
+	measure 'Units Sold' = COUNTROWS ( fact_sales )
+		formatString: 0
+		lineageTag: e4857808-07db-45a1-9dfe-a2bb2f40eec3
+
+	measure 'Revenue Previous Month' =
+			
+			CALCULATE (
+			    [Total Revenue],
+			    DATEADD ( dim_date[Date], -1, MONTH )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 6ec59e11-1631-43b4-a847-28a55a9ebc31
+
+	measure 'Revenue MoM %' =
+			
+			VAR PreviousRevenue = [Revenue Previous Month]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( PreviousRevenue ),
+			        DIVIDE ( [Total Revenue] - PreviousRevenue, PreviousRevenue )
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 5dde8088-8563-43e4-86aa-6d50e2efb85b
+
+	measure 'Revenue Same Period LY' =
+			
+			CALCULATE (
+			    [Total Revenue],
+			    SAMEPERIODLASTYEAR ( dim_date[Date] )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 70e48a34-3416-4636-9b96-db9619eadc9e
+
+	measure 'Revenue YoY %' =
+			
+			VAR LastYear = [Revenue Same Period LY]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( LastYear ),
+			        DIVIDE ( [Total Revenue] - LastYear, LastYear )
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 389b3165-45f6-414a-882f-79fa49888fc5
+
+	measure 'Cumulative Revenue' =
+			
+			CALCULATE (
+			    [Total Revenue],
+			    FILTER (
+			        ALL ( dim_date[Date] ),
+			        dim_date[Date] <= MAX ( dim_date[Date] )
+			    )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 16d98818-d0bf-4670-9165-673bf042cc42
+
+	measure 'Total Customers' =
+			
+			CALCULATE (
+			    DISTINCTCOUNT ( fact_orders[customer_unique_id] ),
+			    fact_orders[is_sale] = 1
+			)
+		formatString: 0
+		lineageTag: 1fd56969-8170-4233-94f9-39f5540c25a4
+
+	measure 'New Customers' =
+			
+			CALCULATE (
+			    [Total Customers],
+			    fact_orders[is_first_order] = 1
+			)
+		formatString: 0
+		lineageTag: 496d208a-7f93-4a07-a277-123663fa8f9b
+
+	measure 'Returning Customers' = [Total Customers] - [New Customers]
+		formatString: 0
+		lineageTag: 32ee152c-e397-4565-8d04-48d9e85bf164
+
+	measure 'Returning Customer %' =
+			
+			DIVIDE ( [Returning Customers], [Total Customers] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b0ef30d9-8a3e-45f0-9e44-3018c79d4e45
+
+	measure 'Repeat Customers' =
+			
+			CALCULATE (
+			    [Total Customers],
+			    dim_customer[lifetime_orders] >= 2
+			)
+		formatString: 0
+		lineageTag: bd6bc343-7225-49e2-92b3-68844344b744
+
+	measure 'Repeat Purchase Rate %' =
+			
+			DIVIDE ( [Repeat Customers], [Total Customers] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ae8b06cd-6d55-493a-92db-3f5df87cee62
+
+	measure 'Orders per Customer' =
+			
+			DIVIDE ( [Sales Orders], [Total Customers] )
+		formatString: 0.00
+		lineageTag: fff6b735-7904-4226-9cae-1166ab50c5c5
+
+	measure 'Customer Share %' =
+			
+			DIVIDE (
+			    [Total Customers],
+			    CALCULATE ( [Total Customers], ALL ( dim_customer ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 892d052b-ff11-4bd9-80f5-85cb031f3d01
+
+	measure 'Customer Revenue Share %' =
+			
+			DIVIDE (
+			    [Total Revenue],
+			    CALCULATE ( [Total Revenue], ALL ( dim_customer ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 55d40004-47a9-41b1-b18f-4b038159ddfe
+
+	measure 'Category Revenue Share %' =
+			
+			DIVIDE (
+			    [Product Revenue],
+			    CALCULATE ( [Product Revenue], ALL ( dim_product ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 09ceee3f-226c-462e-b27d-b9947ce317e5
+
+	measure 'Category Rank' =
+			
+			IF (
+			    HASONEVALUE ( dim_product[category] ),
+			    RANKX (
+			        ALL ( dim_product[category] ),
+			        [Product Revenue],
+			        ,
+			        DESC,
+			        DENSE
+			    )
+			)
+		formatString: 0
+		lineageTag: 283ba359-2711-4cbd-b462-b5318efccb48
+
+	measure 'Avg Item Price' =
+			
+			DIVIDE ( [Product Revenue], [Units Sold] )
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 2577104d-d14b-4139-97cd-0e07b087a92d
+
+	measure 'State Revenue Share %' =
+			
+			DIVIDE (
+			    [Total Revenue],
+			    CALCULATE ( [Total Revenue], ALL ( dim_state ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 58e6abdd-b51f-4806-942a-5b24d0942e46
+
+	measure 'Valid Deliveries' =
+			
+			CALCULATE (
+			    COUNTROWS ( fact_orders ),
+			    fact_orders[is_valid_delivery] = 1
+			)
+		formatString: 0
+		lineageTag: 4ad47bd9-a99f-49fe-8eb1-b23f0429d37b
+
+	measure 'Late Deliveries' =
+			
+			CALCULATE (
+			    COUNTROWS ( fact_orders ),
+			    fact_orders[is_late] = 1
+			)
+		formatString: 0
+		lineageTag: 7b12c7cc-50cc-457b-9a97-d71642dda8c8
+
+	measure 'Late Delivery %' =
+			
+			DIVIDE ( [Late Deliveries], [Valid Deliveries] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b36ec4ce-1a03-460b-9699-2c776c326c9e
+
+	measure 'Avg Delivery Days' =
+			
+			CALCULATE (
+			    AVERAGE ( fact_orders[delivery_days] ),
+			    fact_orders[is_valid_delivery] = 1
+			)
+		formatString: 0.00
+		lineageTag: fb068166-7dcf-42a9-ac34-bf4d34db496d
+
+	measure 'Avg Promised Days' =
+			
+			CALCULATE (
+			    AVERAGE ( fact_orders[estimated_delivery_days] ),
+			    fact_orders[is_valid_delivery] = 1
+			)
+		formatString: 0.00
+		lineageTag: d48e3b75-9137-4229-808f-2c56cb91d869
+
+	measure 'Canceled Orders' =
+			
+			CALCULATE (
+			    [Total Orders],
+			    fact_orders[order_status] = "canceled"
+			)
+		formatString: 0
+		lineageTag: da0d6f8c-68a1-4429-8541-0b91ca704622
+
+	measure 'Cancellation %' =
+			
+			DIVIDE ( [Canceled Orders], [Total Orders] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 51c46f93-7218-4327-9750-3d7fb7987761
+
+	measure 'Order Status Share %' =
+			
+			DIVIDE (
+			    [Total Orders],
+			    CALCULATE (
+			        [Total Orders],
+			        ALL ( fact_orders[order_status] )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 7ad2cbbc-31eb-4d12-ae31-791af5ade610
+
+	measure 'Payment Value' = SUM ( fact_payments[payment_value] )
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 0c00d4ed-e69a-42c5-883d-933ddecc3b12
+
+	measure 'Orders Using Method' =
+			
+			DISTINCTCOUNT ( fact_payments[order_id] )
+		formatString: 0
+		lineageTag: 13a9831d-3862-454a-9321-daf48125f255
+
+	measure 'Payment Value Share %' =
+			
+			DIVIDE (
+			    [Payment Value],
+			    CALCULATE (
+			        [Payment Value],
+			        ALL ( fact_payments[payment_type] )
+			    )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 084d0760-d590-45c4-91e0-c372cdcc990e
+
+	measure 'Avg Review Score' =
+			
+			AVERAGE ( fact_orders[review_score] )
+		formatString: 0.00
+		lineageTag: e557ba47-ee24-4600-96e4-904b137557aa
+
+	measure Reviews = COUNT ( fact_orders[review_score] )
+		formatString: 0
+		lineageTag: 523a4276-7d6d-48f3-9678-257261d38331
+
+	measure 'Negative Review %' =
+			
+			DIVIDE (
+			    CALCULATE (
+			        [Reviews],
+			        fact_orders[review_score] <= 2
+			    ),
+			    [Reviews]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a9070e7e-0a43-43c9-b32b-f095fb69291f
+
+	measure 'Review Share %' =
+			
+			DIVIDE (
+			    [Reviews],
+			    CALCULATE (
+			        [Reviews],
+			        ALL ( fact_orders[review_score] )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 6aa231ec-20ca-41e3-a54f-8cc805946a8c
+
+	measure 'Total Reveue' = SUM ( fact_sales[line_total] )
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: e600500b-3382-4c97-91a4-6f154b73d102
+
+	column Column
+		isHidden
+		formatString: 0
+		lineageTag: 8bf81d9e-48b0-49fc-88a6-b025faa90a85
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measure = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = c6e1930c099847f590d27fec843ae44f
+

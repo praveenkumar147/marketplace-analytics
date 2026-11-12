@@ -1,0 +1,68 @@
+table fact_payments
+	lineageTag: e0144978-0db8-4920-a0c6-80298ee9b4d2
+
+	column order_id
+		dataType: string
+		lineageTag: 3518d957-7454-4c88-bf52-39354bd19c64
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_sequential
+		dataType: int64
+		formatString: 0
+		lineageTag: 575da882-984b-4708-ad23-6d0192e22e45
+		summarizeBy: sum
+		sourceColumn: payment_sequential
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_type
+		dataType: string
+		lineageTag: 7511eec6-16f8-4423-aedd-066e95dc72a6
+		summarizeBy: none
+		sourceColumn: payment_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_installments
+		dataType: int64
+		formatString: 0
+		lineageTag: 568ded5f-94e7-4d00-a260-c33ac4f3ba1e
+		summarizeBy: sum
+		sourceColumn: payment_installments
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_value
+		dataType: double
+		lineageTag: 93772243-5a80-4ace-9f55-eeb6f0d56b9b
+		summarizeBy: sum
+		sourceColumn: payment_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column installment_group
+		dataType: string
+		lineageTag: 9acd7249-5935-4f7a-a95c-25236271cc76
+		summarizeBy: none
+		sourceColumn: installment_group
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_payments = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_fact_payments = Source{[Schema="marketplace_analytics",Item="vw_fact_payments"]}[Data]
+				in
+				    marketplace_analytics_vw_fact_payments
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

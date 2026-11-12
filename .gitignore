@@ -18,8 +18,13 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# --- Power BI (large binary; commit only if you decide to) ---
+# --- Power BI ---
 *.pbix.bak
+# PBIP: data cache (holds a full copy of the imported data) and machine-specific settings
+**/.pbi/cache.abf
+**/.pbi/localSettings.json
+# Local safety copies of report files (contain data, not redistributed)
+powerbi/backups/
 
 # --- OS / editor ---
 .DS_Store

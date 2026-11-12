@@ -1,0 +1,22 @@
+expression _Measures =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [dummy = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"dummy", Int64.Type}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"dummy"})
+		in
+		    #"Removed Columns"
+	lineageTag: 5966b45e-f66f-42a2-9fed-d30d9f5964ed
+
+	annotation PBI_ResultType = Table
+
+expression '_Measures (2)' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", Int64.Type}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+		in
+		    #"Removed Columns"
+	lineageTag: fbe33b99-18b8-4a92-90d8-2980598a0959
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,40 @@
+table dim_seller
+	lineageTag: 65732933-b5d5-4df3-96d3-99e30970be43
+
+	column seller_id
+		dataType: string
+		lineageTag: f94ce0c4-8c10-4ba9-9151-a696f5fa2baf
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_city
+		dataType: string
+		lineageTag: 3e90ef4b-2b42-4db5-9ba6-8be66c63e353
+		summarizeBy: none
+		sourceColumn: seller_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_state
+		dataType: string
+		lineageTag: 24410069-cb94-4bc4-a16e-0a09d33c8d08
+		summarizeBy: none
+		sourceColumn: seller_state
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_seller = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_dim_seller = Source{[Schema="marketplace_analytics",Item="vw_dim_seller"]}[Data]
+				in
+				    marketplace_analytics_vw_dim_seller
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

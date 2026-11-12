@@ -1,0 +1,88 @@
+table fact_sales
+	lineageTag: 1b93dcbc-c721-4975-b31b-39a0624b1eac
+
+	column order_id
+		dataType: string
+		lineageTag: aa65103f-0ad5-4942-933a-1ad6c8d0fd9b
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_item_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e65ebaa-75fc-4399-a57a-3ccb8ebc206d
+		summarizeBy: sum
+		sourceColumn: order_item_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: string
+		lineageTag: 87ef2843-0c8f-4b38-b642-54c055fa3f5d
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_id
+		dataType: string
+		lineageTag: 07566e68-7575-4536-94db-6b14b5ddb064
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column price
+		dataType: double
+		lineageTag: ecf228b4-4941-4870-a831-86444a8fc3c6
+		summarizeBy: sum
+		sourceColumn: price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column freight_value
+		dataType: double
+		lineageTag: 31727e1d-fe8b-4c2d-b5cc-57097c3561b7
+		summarizeBy: sum
+		sourceColumn: freight_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column line_total
+		dataType: double
+		lineageTag: e79969d9-877b-4a29-a24b-2746fd1a1057
+		summarizeBy: sum
+		sourceColumn: line_total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_price_outlier
+		dataType: int64
+		formatString: 0
+		lineageTag: fdc34528-1ef5-48c8-a7e5-0c6068438fb9
+		summarizeBy: sum
+		sourceColumn: is_price_outlier
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_sales = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_fact_sales = Source{[Schema="marketplace_analytics",Item="vw_fact_sales"]}[Data]
+				in
+				    marketplace_analytics_vw_fact_sales
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

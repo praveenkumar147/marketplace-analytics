@@ -1,0 +1,255 @@
+table fact_orders
+	lineageTag: efd9dd9a-1f39-4e50-a412-a0cff7b24f0c
+
+	column order_id
+		dataType: string
+		lineageTag: 7224bbe5-7229-41ec-b19b-25a0b69c23cb
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_unique_id
+		dataType: string
+		lineageTag: 0a757821-a4c5-48a9-9812-33ed2f075759
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_state
+		dataType: string
+		lineageTag: befa3218-5c74-409e-87dc-e6f1067f1c49
+		summarizeBy: none
+		sourceColumn: customer_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_status
+		dataType: string
+		lineageTag: 37d71709-f7c3-4a1e-bd89-b790e99df115
+		summarizeBy: none
+		sourceColumn: order_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_purchase_timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5ed8f721-7574-4641-a14a-820aa902a438
+		summarizeBy: none
+		sourceColumn: order_purchase_timestamp
+
+		variation Variation
+			isDefault
+			relationship: 41c2c228-49bf-40ab-8159-0569dd402b2c
+			defaultHierarchy: LocalDateTable_864c16b4-8689-4171-886a-0bd6f68ccbb8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchase_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b814dd91-b029-4a56-82a8-935a14841e52
+		summarizeBy: none
+		sourceColumn: purchase_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column purchase_year_month
+		dataType: string
+		lineageTag: 69b60bc4-9ff0-4d4c-9bb4-9f157a1581ad
+		summarizeBy: none
+		sourceColumn: purchase_year_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchase_hour
+		dataType: int64
+		formatString: 0
+		lineageTag: 586a7e28-704e-4a0f-bf70-43100671906f
+		summarizeBy: sum
+		sourceColumn: purchase_hour
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_analysis_window
+		dataType: int64
+		formatString: 0
+		lineageTag: bb165f15-d43f-4c2f-98a4-0a0918afe9f7
+		summarizeBy: sum
+		sourceColumn: in_analysis_window
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_revenue_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 8bfede4c-4965-4712-b022-8b744e96a871
+		summarizeBy: sum
+		sourceColumn: is_revenue_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_sale
+		dataType: int64
+		formatString: 0
+		lineageTag: 1fbbf80f-f392-4823-b72f-fa4022f01415
+		summarizeBy: sum
+		sourceColumn: is_sale
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_first_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e38dace-a872-4cb9-bc0c-cda346f3cbbb
+		summarizeBy: sum
+		sourceColumn: is_first_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_order_number
+		dataType: int64
+		formatString: 0
+		lineageTag: 85f8e194-dd05-4836-9068-9dd628e079f8
+		summarizeBy: sum
+		sourceColumn: customer_order_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_value
+		dataType: double
+		lineageTag: c795194a-72b1-4fc2-a1b2-c0e48e98c65f
+		summarizeBy: sum
+		sourceColumn: order_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column product_value
+		dataType: double
+		lineageTag: 3aeaf099-edb4-4675-80cc-dca4ea66d1ea
+		summarizeBy: sum
+		sourceColumn: product_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column freight_value
+		dataType: double
+		lineageTag: e36c7b5e-d8ce-46b8-8d67-b18f09ea381a
+		summarizeBy: sum
+		sourceColumn: freight_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column items
+		dataType: int64
+		formatString: 0
+		lineageTag: 11c48295-1ac0-440f-94ad-a2dc7390f7c6
+		summarizeBy: sum
+		sourceColumn: items
+
+		annotation SummarizationSetBy = Automatic
+
+	column main_payment_type
+		dataType: string
+		lineageTag: 43d53014-227d-4c77-8aa4-e08bf49bfa71
+		summarizeBy: none
+		sourceColumn: main_payment_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column main_payment_installments
+		dataType: int64
+		formatString: 0
+		lineageTag: 4d9e976f-e1ae-475e-a74d-55188e4c0c49
+		summarizeBy: sum
+		sourceColumn: main_payment_installments
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_valid_delivery
+		dataType: int64
+		formatString: 0
+		lineageTag: b0de5256-9149-4c02-a986-37b402bca299
+		summarizeBy: sum
+		sourceColumn: is_valid_delivery
+
+		annotation SummarizationSetBy = Automatic
+
+	column delivery_days
+		dataType: double
+		lineageTag: fe8d425f-8b07-4cae-9f40-980f6c633c92
+		summarizeBy: sum
+		sourceColumn: delivery_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column estimated_delivery_days
+		dataType: double
+		lineageTag: 669c7deb-7df8-4757-b558-ce7aa00fd99e
+		summarizeBy: sum
+		sourceColumn: estimated_delivery_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column delivery_delay_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 4788bbc3-6f23-4633-94b3-259ff81289e7
+		summarizeBy: sum
+		sourceColumn: delivery_delay_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_late
+		dataType: int64
+		formatString: 0
+		lineageTag: b333754e-4159-4310-baf1-c3ff591b4c7a
+		summarizeBy: sum
+		sourceColumn: is_late
+
+		annotation SummarizationSetBy = Automatic
+
+	column delivery_outcome
+		dataType: string
+		lineageTag: 38b093cd-32b4-4437-88e9-f03c5a5a7d19
+		summarizeBy: none
+		sourceColumn: delivery_outcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column review_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 95ca60e1-088d-4ee0-90f4-5ea8534f02ef
+		summarizeBy: sum
+		sourceColumn: review_score
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_orders = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_fact_orders = Source{[Schema="marketplace_analytics",Item="vw_fact_orders"]}[Data]
+				in
+				    marketplace_analytics_vw_fact_orders
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,120 @@
+table dim_date
+	lineageTag: a34c4613-26a7-44ac-b8d5-12fc5493faab
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: General Date
+		lineageTag: f1d5477a-625c-43bf-9b7c-9b53f954d15d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		formatString: 0
+		lineageTag: 5020d188-0b47-493c-ba72-a1d14b8b8279
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		lineageTag: 9cd422fd-8b03-4805-8dac-24e147e811a7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: 0a25a802-9e30-462e-8e12-45f52361438a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		lineageTag: 3baeaac7-9be4-4d02-ac7b-cab209d2a80d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month'
+		lineageTag: aa5507cb-2b21-4c65-a815-383c6c52b580
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Start'
+		formatString: General Date
+		lineageTag: cb284dba-92fe-4caf-89f1-56e43a5cddbb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Start]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekday
+		lineageTag: f45da151-372d-47f8-9b88-06dfada2ff78
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Weekday Number'
+		formatString: 0
+		lineageTag: 3e54b83d-88b5-4563-bf50-2d944ba8e46f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Analysis Window'
+		lineageTag: e94704a6-5843-41cc-8671-12ced386cedf
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Analysis Window]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = calculated
+		mode: import
+		source = ```
+				
+				VAR MinDate = DATE ( 2016, 9, 1 )
+				VAR MaxDate = DATE ( 2018, 10, 31 )
+				RETURN
+				    ADDCOLUMNS (
+				        CALENDAR ( MinDate, MaxDate ),
+				        "Year", YEAR ( [Date] ),
+				        "Quarter", "Q" & QUARTER ( [Date] ),
+				        "Month Number", MONTH ( [Date] ),
+				        "Month", FORMAT ( [Date], "MMM" ),
+				        "Year Month", FORMAT ( [Date], "YYYY-MM" ),
+				        "Month Start", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
+				        "Weekday", FORMAT ( [Date], "ddd" ),
+				        "Weekday Number", WEEKDAY ( [Date], 2 ),
+				        "Analysis Window",
+				            IF (
+				                [Date] >= DATE ( 2017, 1, 1 ) && [Date] < DATE ( 2018, 9, 1 ),
+				                "Complete months",
+				                "Partial months"
+				            )
+				    )
+				
+				```
+
+	annotation PBI_Id = 3185d21246744b0ba28d09ba98b1d1b3
+

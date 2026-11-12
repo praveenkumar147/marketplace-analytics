@@ -1,0 +1,133 @@
+table dim_customer
+	lineageTag: e18bf0e2-a331-46d6-a304-a2eb80459a43
+
+	measure 'Total Revenue' = SUM ( fact_sales[line_total] )
+		lineageTag: 25e4966e-bf96-4d45-8982-55454759cebe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column customer_unique_id
+		dataType: string
+		lineageTag: 4514b767-5240-4ace-a17c-9438f62d2aee
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_state
+		dataType: string
+		lineageTag: 4f295c5f-5f92-4b40-b3a1-660f5dd92342
+		summarizeBy: none
+		sourceColumn: customer_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_city
+		dataType: string
+		lineageTag: a79ec6a5-fb50-4f2f-97e4-cd921bd1b0bb
+		summarizeBy: none
+		sourceColumn: customer_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column lifetime_orders
+		dataType: int64
+		formatString: 0
+		lineageTag: 9d267eb1-5dc3-4d8d-bcb9-5225355d1589
+		summarizeBy: none
+		sourceColumn: lifetime_orders
+
+		annotation SummarizationSetBy = Automatic
+
+	column frequency_bucket
+		dataType: string
+		lineageTag: ecf4798b-ddf6-4fe1-bb18-f048dac768f0
+		summarizeBy: none
+		sourceColumn: frequency_bucket
+
+		annotation SummarizationSetBy = Automatic
+
+	column lifetime_revenue
+		dataType: double
+		lineageTag: b2f424bf-3127-4ca7-9b8b-a7754905d7bd
+		summarizeBy: none
+		sourceColumn: lifetime_revenue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column recency_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 9865e8cb-07d0-4dad-9f0e-330d029fd82b
+		summarizeBy: none
+		sourceColumn: recency_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column r_score
+		dataType: int64
+		formatString: 0
+		lineageTag: a168260a-7ee2-48c0-93b3-923c3d39c951
+		summarizeBy: none
+		sourceColumn: r_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column f_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 017cc25a-d3d6-455d-b757-61ea4470b0a6
+		summarizeBy: none
+		sourceColumn: f_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column m_score
+		dataType: int64
+		formatString: 0
+		lineageTag: b7b7287e-4254-4e1a-a447-f3055144eea0
+		summarizeBy: none
+		sourceColumn: m_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_code
+		dataType: string
+		lineageTag: 63a3d176-c4af-430f-933b-585cee2a9808
+		summarizeBy: none
+		sourceColumn: rfm_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_segment
+		dataType: string
+		lineageTag: 3e311e6b-14c5-4beb-87d9-a6f8f9b0fdcc
+		summarizeBy: none
+		sourceColumn: rfm_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_segment_order
+		dataType: int64
+		formatString: 0
+		lineageTag: c1951d68-fe66-4e31-92e8-4e8ac2a873c5
+		summarizeBy: none
+		sourceColumn: rfm_segment_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = MySQL.Database("localhost:3306", "marketplace_analytics", [ReturnSingleDatabase=true]),
+				    marketplace_analytics_vw_dim_customer = Source{[Schema="marketplace_analytics",Item="vw_dim_customer"]}[Data]
+				in
+				    marketplace_analytics_vw_dim_customer
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
