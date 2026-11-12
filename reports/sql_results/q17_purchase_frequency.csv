@@ -1,0 +1,5 @@
+frequency_bucket,customers,customer_pct,revenue,revenue_pct,avg_revenue_per_customer
+1 order,92096,96.96,14845311.82,94.34,161.19
+2 orders,2651,2.79,771896.77,4.91,291.17
+3 orders,188,0.2,80933.47,0.51,430.5
+4+ orders,48,0.05,37384.97,0.24,778.85

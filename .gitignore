@@ -1,0 +1,28 @@
+# --- Secrets: never commit ---
+.env
+*.env
+!.env.example
+
+# --- Data: raw dataset is downloaded from Kaggle (CC BY-NC-SA 4.0), not redistributed ---
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/powerbi/
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Power BI (large binary; commit only if you decide to) ---
+*.pbix.bak
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

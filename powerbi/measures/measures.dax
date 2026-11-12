@@ -1,0 +1,243 @@
+// =============================================================================
+// Marketplace Analytics - DAX measures
+//
+// How to use: in Power BI Desktop, create an empty table named "_Measures"
+// (Home > Enter data > Load), then for each block below choose
+// Modeling > New measure and paste ONE measure (name = expression).
+// Set the format shown in the [Format] comment.
+//
+// Tables (from the MySQL views in sql/views/01_powerbi_views.sql):
+//   fact_orders, fact_sales, fact_payments, dim_customer, dim_product,
+//   dim_seller, dim_state, and dim_date (calculated table, see below).
+//
+// Every measure is checked against reports/powerbi_expected_values.md.
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 0. Calculated table: dim_date  (Modeling > New table)
+//    Then: Table tools > Mark as date table > column [Date]
+// -----------------------------------------------------------------------------
+dim_date =
+VAR MinDate = DATE ( 2016, 9, 1 )
+VAR MaxDate = DATE ( 2018, 10, 31 )
+RETURN
+    ADDCOLUMNS (
+        CALENDAR ( MinDate, MaxDate ),
+        "Year", YEAR ( [Date] ),
+        "Quarter", "Q" & QUARTER ( [Date] ),
+        "Month Number", MONTH ( [Date] ),
+        "Month", FORMAT ( [Date], "MMM" ),
+        "Year Month", FORMAT ( [Date], "YYYY-MM" ),
+        "Month Start", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
+        "Weekday", FORMAT ( [Date], "ddd" ),
+        "Weekday Number", WEEKDAY ( [Date], 2 ),
+        "Analysis Window",
+            IF (
+                [Date] >= DATE ( 2017, 1, 1 ) && [Date] < DATE ( 2018, 9, 1 ),
+                "Complete months",
+                "Partial months"
+            )
+    )
+
+
+// -----------------------------------------------------------------------------
+// 1. Sales
+// -----------------------------------------------------------------------------
+
+// fact_sales contains only items of revenue orders (not canceled/unavailable),
+// so revenue needs no extra filter.   [Format] Currency R$, 0 decimals
+Total Revenue = SUM ( fact_sales[line_total] )
+
+// [Format] Currency R$
+Product Revenue = SUM ( fact_sales[price] )
+
+// [Format] Currency R$
+Freight Revenue = SUM ( fact_sales[freight_value] )
+
+// [Format] Percentage, 1 decimal
+Freight Share % = DIVIDE ( [Freight Revenue], [Total Revenue] )
+
+// All orders placed, any status.   [Format] Whole number
+Total Orders = COUNTROWS ( fact_orders )
+
+// Orders that produced revenue (revenue order with items).   [Format] Whole number
+Sales Orders = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[is_sale] = 1 )
+
+// Revenue per order, averaged over orders, NOT over items.   [Format] Currency R$, 2 decimals
+Average Order Value = DIVIDE ( [Total Revenue], DISTINCTCOUNT ( fact_sales[order_id] ) )
+
+// [Format] Whole number
+Units Sold = COUNTROWS ( fact_sales )
+
+
+// -----------------------------------------------------------------------------
+// 2. Time intelligence (needs dim_date marked as a date table)
+// -----------------------------------------------------------------------------
+
+// [Format] Currency R$
+Revenue Previous Month =
+CALCULATE ( [Total Revenue], DATEADD ( dim_date[Date], -1, MONTH ) )
+
+// Blank when there is no previous month to compare with.   [Format] Percentage, 1 decimal
+Revenue MoM % =
+VAR PreviousRevenue = [Revenue Previous Month]
+RETURN
+    IF ( NOT ISBLANK ( PreviousRevenue ), DIVIDE ( [Total Revenue] - PreviousRevenue, PreviousRevenue ) )
+
+// [Format] Currency R$
+Revenue Same Period LY =
+CALCULATE ( [Total Revenue], SAMEPERIODLASTYEAR ( dim_date[Date] ) )
+
+// Compares the selected period with the same period one year earlier.
+// With the date slicer on 2018-01-01..2018-08-31 this shows the Jan-Aug growth.
+// [Format] Percentage, 1 decimal
+Revenue YoY % =
+VAR LastYear = [Revenue Same Period LY]
+RETURN
+    IF ( NOT ISBLANK ( LastYear ), DIVIDE ( [Total Revenue] - LastYear, LastYear ) )
+
+// Running total up to the last date in context.   [Format] Currency R$
+Cumulative Revenue =
+CALCULATE (
+    [Total Revenue],
+    FILTER ( ALL ( dim_date[Date] ), dim_date[Date] <= MAX ( dim_date[Date] ) )
+)
+
+
+// -----------------------------------------------------------------------------
+// 3. Customers  (a customer = customer_unique_id)
+// -----------------------------------------------------------------------------
+
+// Distinct people with at least one sale in the current filter context.   [Format] Whole number
+Total Customers =
+CALCULATE ( DISTINCTCOUNT ( fact_orders[customer_unique_id] ), fact_orders[is_sale] = 1 )
+
+// Customers whose FIRST ever sale falls in the current context (e.g. that month).
+// [Format] Whole number
+New Customers = CALCULATE ( [Total Customers], fact_orders[is_first_order] = 1 )
+
+// Active customers who had bought before.   [Format] Whole number
+Returning Customers = [Total Customers] - [New Customers]
+
+// [Format] Percentage, 1 decimal
+Returning Customer % = DIVIDE ( [Returning Customers], [Total Customers] )
+
+// Customers in context with 2+ lifetime orders.   [Format] Whole number
+Repeat Customers = CALCULATE ( [Total Customers], dim_customer[lifetime_orders] >= 2 )
+
+// [Format] Percentage, 2 decimals
+Repeat Purchase Rate % = DIVIDE ( [Repeat Customers], [Total Customers] )
+
+// [Format] Decimal, 3 decimals
+Orders per Customer = DIVIDE ( [Sales Orders], [Total Customers] )
+
+// Share of all customers (used on the RFM segment and frequency visuals).
+// [Format] Percentage, 1 decimal
+Customer Share % =
+DIVIDE ( [Total Customers], CALCULATE ( [Total Customers], ALL ( dim_customer ) ) )
+
+// [Format] Percentage, 1 decimal
+Customer Revenue Share % =
+DIVIDE ( [Total Revenue], CALCULATE ( [Total Revenue], ALL ( dim_customer ) ) )
+
+
+// -----------------------------------------------------------------------------
+// 4. Products and categories
+// -----------------------------------------------------------------------------
+
+// Share of product revenue across ALL categories (not just the visible ones).
+// [Format] Percentage, 1 decimal
+Category Revenue Share % =
+DIVIDE ( [Product Revenue], CALCULATE ( [Product Revenue], ALL ( dim_product ) ) )
+
+// 1 = highest product revenue.   [Format] Whole number
+Category Rank =
+IF (
+    HASONEVALUE ( dim_product[category] ),
+    RANKX ( ALL ( dim_product[category] ), [Product Revenue], , DESC, DENSE )
+)
+
+// [Format] Currency R$, 2 decimals
+Avg Item Price = DIVIDE ( [Product Revenue], [Units Sold] )
+
+
+// -----------------------------------------------------------------------------
+// 5. Regions
+// -----------------------------------------------------------------------------
+
+// [Format] Percentage, 1 decimal
+State Revenue Share % =
+DIVIDE ( [Total Revenue], CALCULATE ( [Total Revenue], ALL ( dim_state ) ) )
+
+
+// -----------------------------------------------------------------------------
+// 6. Delivery  (valid deliveries only: delivered, has date, no sequence error)
+// -----------------------------------------------------------------------------
+
+// [Format] Whole number
+Valid Deliveries =
+CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[is_valid_delivery] = 1 )
+
+// [Format] Whole number
+Late Deliveries = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[is_late] = 1 )
+
+// [Format] Percentage, 2 decimals
+Late Delivery % = DIVIDE ( [Late Deliveries], [Valid Deliveries] )
+
+// [Format] Decimal, 1 decimal
+Avg Delivery Days =
+CALCULATE ( AVERAGE ( fact_orders[delivery_days] ), fact_orders[is_valid_delivery] = 1 )
+
+// [Format] Decimal, 1 decimal
+Avg Promised Days =
+CALCULATE ( AVERAGE ( fact_orders[estimated_delivery_days] ), fact_orders[is_valid_delivery] = 1 )
+
+
+// -----------------------------------------------------------------------------
+// 7. Order status
+// -----------------------------------------------------------------------------
+
+// [Format] Whole number
+Canceled Orders = CALCULATE ( [Total Orders], fact_orders[order_status] = "canceled" )
+
+// [Format] Percentage, 2 decimals
+Cancellation % = DIVIDE ( [Canceled Orders], [Total Orders] )
+
+// [Format] Percentage, 2 decimals
+Order Status Share % =
+DIVIDE ( [Total Orders], CALCULATE ( [Total Orders], ALL ( fact_orders[order_status] ) ) )
+
+
+// -----------------------------------------------------------------------------
+// 8. Payments  (fact_payments: one row per payment line)
+// -----------------------------------------------------------------------------
+
+// [Format] Currency R$
+Payment Value = SUM ( fact_payments[payment_value] )
+
+// An order paid by card + voucher counts once for each method.   [Format] Whole number
+Orders Using Method = DISTINCTCOUNT ( fact_payments[order_id] )
+
+// [Format] Percentage, 1 decimal
+Payment Value Share % =
+DIVIDE ( [Payment Value], CALCULATE ( [Payment Value], ALL ( fact_payments[payment_type] ) ) )
+
+
+// -----------------------------------------------------------------------------
+// 9. Reviews  (one official review per order)
+// -----------------------------------------------------------------------------
+
+// [Format] Decimal, 2 decimals
+Avg Review Score = AVERAGE ( fact_orders[review_score] )
+
+// [Format] Whole number
+Reviews = COUNT ( fact_orders[review_score] )
+
+// Share of 1-2 star reviews.   [Format] Percentage, 1 decimal
+Negative Review % =
+DIVIDE ( CALCULATE ( [Reviews], fact_orders[review_score] <= 2 ), [Reviews] )
+
+// [Format] Percentage, 1 decimal
+Review Share % =
+DIVIDE ( [Reviews], CALCULATE ( [Reviews], ALL ( fact_orders[review_score] ) ) )
